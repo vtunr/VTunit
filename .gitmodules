@@ -1,0 +1,6 @@
+[submodule "lib/unity"]
+	path = lib/unity
+	url = https://github.com/ThrowTheSwitch/Unity.git
+[submodule "lib/fff"]
+	path = lib/fff
+	url = https://github.com/meekrosoft/fff
