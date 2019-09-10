@@ -24,6 +24,14 @@ class CMakeListsGenerator():
             f.write("include(vtunit/cmake/ctest.cmake)\n")
             f.write("include(vtunit/cmake/helper.cmake)\n")
             f.write("include(vtunit/cmake/unity_fff.cmake)\n")
+            f.write("include(include.cmake)\n")
+            f.write("include(options.cmake)\n\n")
+
+        with open(os.path.join(self.test_path, "include.cmake"), 'w') as f:
+            f.write("# Here put your include folder \n\n")
+
+        with open(os.path.join(self.test_path, "options.cmake"), 'w') as f:
+            f.write("# Here put other options \n\n")
 
     def AddTest(self, test_cmake):
         with open(os.path.join(self.test_path, "CMakeLists.txt"), 'a') as f:
