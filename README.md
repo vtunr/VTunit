@@ -28,14 +28,19 @@ You then need to add the c file you want to compile for your test in the `test_{
 
 You can also add include in `CMakeLists.txt`
 
-# Running a new test
- 
-Not in this script yet.
+# Running test
+
+Running in WSL or linux : 
+
+* `cd my_unit_test_folder`
+* If you want to force calling cmake (need to be done once before calling `run`): `python vtunit/vtunit.py build --clean_all --cmake`
+* Then to build and run : `python vtunit/vtunit.py build --run`
+* To clean : `python vtunit/vtunit.py build --clean`
 
 # TODO :
 
-* Add include.cmake & option.cmake to CMakeLists when generating it
-* Add run/build/clean in vtunit script
+* Add requirements.txt
+* Add package to install
 * Add setup.py so we don't have to clone it for each project
 
 
