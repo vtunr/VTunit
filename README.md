@@ -10,6 +10,11 @@ Clone this repository with in the folder you want your unit test :
 * `cd my_unit_test_folder`
 * `git clone --recursive https://github.com/vtunr/VTunit.git vtunit`
 
+## Package to install (if you choose local build)
+
+On ubuntu/WSL :
+* `sudo apt-get install cmake ninja-build ruby`
+
 # Setup unit test for a project
 
 * `cd my_unit_test_folder`
@@ -39,8 +44,8 @@ Running in WSL or linux :
 
 # TODO :
 
-* Add requirements.txt
-* Add package to install
+* Improve argparse
+* Add choice of test to build/run
 * Add setup.py so we don't have to clone it for each project
 
 
