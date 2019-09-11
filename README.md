@@ -1,14 +1,16 @@
 # VTunit
 
-This is a unit test/mock framework based on Unity and fff, aimed for embedded developer.
-All command can be done over docker, and this the main way of working.
+This is a unit test/mock framework based on Unity and fff, aimed for embedded developers.
 
 # Installation 
 
-Clone this repository with in the folder you want your unit test :
+Clone this repository within the folder you want your unit test :
 
 * `cd my_unit_test_folder`
 * `git clone --recursive https://github.com/vtunr/VTunit.git vtunit`
+
+If it's already in a git repository, you can add it as submodule :
+* `git submodule add https://github.com/vtunr/VTunit.git {my_unit_test_folder}/vtunit`
 
 ## Package to install (if you choose local build)
 
@@ -42,10 +44,14 @@ Running in WSL or linux :
 * Then to build and run : `python vtunit/vtunit.py build --run`
 * To clean : `python vtunit/vtunit.py build --clean`
 
+You can also filter the test you want to run :
+* To list : `python vtunit/vtunit.py build --list --filter {my_regex}` (optional `--filter`)
+* To filter : `python vtunit/vtunit.py build --run --filter {my_regex}`
+
 # TODO :
 
 * Improve argparse
-* Add choice of test to build/run
 * Add setup.py so we don't have to clone it for each project
+* Add possibility to run it in a docker container
 
 

@@ -6,6 +6,7 @@ from file_generator import *
 import subprocess
 from subprocess import check_output
 import shutil
+import re
 
 class Project:
     def __init__(self):
@@ -49,33 +50,40 @@ class Project:
         os.chdir("build")
         subprocess.call(self.cmd_cmake, shell=True)
         os.chdir("../")
-    def list_test(self):
+    def list_test(self, filter):
         os.chdir("build")
         cmd = "ctest -N".split(" ")
         out = check_output(cmd)
         list_test = []
         for i in out.split("\n"):
             if("Test #" in i):
-                splt = i.split(": ")[1]
-                list_test.append(splt)
+                splt = i.split(": ")[1].strip()
+                if(filter):
+                    result = re.match(filter, splt)
+                    if(result):
+                        list_test.append(splt)
+                else:
+                    list_test.append(splt)
         os.chdir("../")
         return list_test
     
-    def print_test_list(self):
-        list_test = self.list_test()
+    def print_test_list(self, filter):
+        list_test = self.list_test(filter)
         len_test = len(list_test)
         print("%u test found :"%len_test)
         for test in list_test:
-            print("\t test_%s"%test)
+            print("\t %s"%test)
 
     def run(self, filter):
         if(filter != None):
-            list_test = self.list_test()
-            if(filter[5:] not in list_test):
-                raise Exception("Test not found")
+            list_test = self.list_test(filter)
+            if(not len(list_test)):
+                raise Exception("No test found")
             os.chdir("build")
-            subprocess.call(self.cmd_ninja+" test_"+filter, shell = True)
-            subprocess.call(self.cmd_ctest+" -R "+filter[5:], shell=True)
+            for test in list_test:
+                print("Building ... %s"%test)
+                subprocess.call(self.cmd_ninja+" test_"+test, shell = True)
+            subprocess.call(self.cmd_ctest+" -R "+filter, shell=True)
             subprocess.call(self.cmd_gen_xml, shell=True)
             os.chdir("../")
         else:
@@ -104,11 +112,10 @@ def main():
     build.add_argument('--clean', help='Clean unit test (Ninja)', action='store_true')
     build.add_argument('--clean_all', help='Clean all unit test (CMake+Ninja)', action='store_true')
     build.add_argument('--cmake', help='Run cmake', action='store_true')
-    build.add_argument('--run', help='Run unit test', action='store_true')
+    build.add_argument('--run', help='Run unit test (can be filtered)', action='store_true')
     build.add_argument('--filter', help='Filter unit test')
-    build.add_argument('--list', help='Filter unit test', action='store_true')
+    build.add_argument('--list', help='List unit test (can be filtered)', action='store_true')
     args = parser.parse_args()
-    print(args)
     pr = Project()
     if(args.command == "init"):
         print "Generating project"
@@ -127,6 +134,6 @@ def main():
         if(args.run):
             pr.run(args.filter)
         if(args.list):
-            pr.print_test_list()
+            pr.print_test_list(args.filter)
 if __name__ == '__main__':
     main()
