@@ -39,16 +39,20 @@ class Project:
 
     def clean(self):
         os.chdir("build")
-        subprocess.call(self.cmd_ninja_clean, shell=True)
+        self.run_cmd(self.cmd_ninja_clean)
         os.chdir("../")
-
+        
+    def run_cmd(self, cmd):
+        ret = subprocess.call(cmd, shell = True)
+        if(ret):
+            exit(ret)
     def cmake(self):
         try:
             os.mkdir("build")
         except:
             pass
         os.chdir("build")
-        subprocess.call(self.cmd_cmake, shell=True)
+        self.run_cmd(self.cmd_cmake)
         os.chdir("../")
     def list_test(self, filter):
         os.chdir("build")
@@ -82,15 +86,15 @@ class Project:
             os.chdir("build")
             for test in list_test:
                 print("Building ... %s"%test)
-                subprocess.call(self.cmd_ninja+" test_"+test, shell = True)
-            subprocess.call(self.cmd_ctest+" -R "+filter, shell=True)
-            subprocess.call(self.cmd_gen_xml, shell=True)
+                self.run_cmd(self.cmd_ninja+" test_"+test)
+            self.run_cmd(self.cmd_ctest+" -R "+filter)
+            self.run_cmd(self.cmd_gen_xml)
             os.chdir("../")
         else:
             os.chdir("build")
-            subprocess.call(self.cmd_ninja, shell=True)
-            subprocess.call(self.cmd_ctest, shell=True)
-            subprocess.call(self.cmd_gen_xml, shell=True)
+            self.run_cmd(self.cmd_ninja)
+            self.run_cmd(self.cmd_ctest)
+            self.run_cmd(self.cmd_gen_xml)
             os.chdir("../")
 
 
