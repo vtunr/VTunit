@@ -70,35 +70,37 @@ class MockGenerator():
         methods_to_mock = cfp.extract_method()
         for m in methods_to_mock:
             with open("mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+os.path.basename(header_to_mock_path)), "a") as f:
-                f.write(self.ctags_method_parse_line(m)+"\n")
+                f.write(self.ctags_method_parse_line(m,f)+"\n")
 
 
     def ctags_method_parse_one_arg(self, arg):
         if(arg == "void"):
-            return ""
+            return [False, ""]
         if(arg == "..."):
-            return arg
+            return [False, arg]
         if("[" and "]" in arg):
             index = arg.rfind(" ")
             arg = arg[:index]+" * "+arg[index:]
-        return arg[:arg.rfind(" ")]
+        if("(*" in arg and arg.count("(") == 2 and arg.count(")") == 2):
+            return [True, arg]
+        print arg, "Not a pointer to function"
+        return [False, arg[:arg.rfind(" ")]]
 
     def ctags_method_parse_sig(self, signature):
         sig = signature[1:-1].split(',')
         sig_parsed = []
+        type_def = []
         for s in sig:
             ret = self.ctags_method_parse_one_arg(s)
-            if(ret != ""):
-                sig_parsed.append(self.ctags_method_parse_one_arg(s))
-        return sig_parsed
+            if(ret[1] != ""):
+                if(ret[0]):
+                    sig_parsed.append(ret[1].split("(*")[1].split(")")[0])
+                    type_def.append(ret[1])
+                else:
+                    sig_parsed.append(ret[1])
+        return [type_def, sig_parsed]
 
-    def write_type_def(self, signature):
-        print signature
-        if(("(*" in signature) and signature.count("(") == 2 and signature.count(")") == 2):
-             with open("mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+os.path.basename(header_to_mock_path)), "a") as f:
-                f.write("typedef %s\n"%signature)
-
-    def ctags_method_parse_line(self, line):
+    def ctags_method_parse_line(self, line, writer):
         if(not len(line)):
             return
         ref = line.split(':')
@@ -106,8 +108,9 @@ class MockGenerator():
         return_ = ref[3]
         sign = ref[4]
         parsed_sign = self.ctags_method_parse_sig(sign)
-        for p in parsed_sign:
-            self.write_type_def(p)
+        for t in parsed_sign[0]:
+            print "TYPEDEF",t
+            writer.write("typedef %s;\n"%t)
         func_type = "VALUE"
         start = ""
         if(return_ == "void"):
@@ -115,11 +118,12 @@ class MockGenerator():
         else:
             start = return_+", "
         post_type = ""
-        print "PARSE_SIGN : ", parsed_sign
-        if("..." in parsed_sign):
+        print "PARSE_SIGN : ", parsed_sign[1]
+        if("..." in parsed_sign[1]):
             post_type = "_VARARG"
         FUNC = "FAKE_%s_FUNC%s(%s%s "%(func_type, post_type,start, function_name)
-        for sig in parsed_sign:
+        for sig in parsed_sign[1]:
+            print "SIG",sig
             FUNC += ", "+sig
         FUNC += ");"
         return FUNC
@@ -141,8 +145,7 @@ def main():
     args = parser.parse_args()
     print args.include
     MockGenerator(args.test_file, args.include, args.mock_prefix)
-    #mg = MockGenerator("test/test_abl_sensorsync_mqtt_process.c", ["../Libraries/ABL_Sensor_Sync/Streaming/", "../SDK/esp-idf/components/log/include/"], "mock_")
-
+  
 
 if __name__ == '__main__':
     main()
