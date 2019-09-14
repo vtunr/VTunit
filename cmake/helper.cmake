@@ -13,4 +13,10 @@ function(generate_test_runner array_c_file)
 	endforeach()
 endfunction()
 
+function(generate_mock test_file)
+	get_property(dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+	execute_process(COMMAND pwd)
+	execute_process(COMMAND python ../vtunit/parse.py --test_file ${test_file} --mock_prefix mock_ --include ${dirs})
+endfunction()
+
 init_test_runner()
