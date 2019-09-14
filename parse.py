@@ -65,13 +65,20 @@ class MockGenerator():
         shutil.rmtree("mock/%s/"%os.path.basename(self.file_test[:-2]), ignore_errors=True)
         os.makedirs("mock/%s/"%os.path.basename(self.file_test[:-2]))
 
-    def gen_mock_header(self, header_to_mock_path):
+    def gen_mock_header(self, header_to_mock_path, header_to_mock):
+        print "HEADER TO MOCK",header_to_mock_path, header_to_mock
         cfp = CFileParser(header_to_mock_path)
         methods_to_mock = cfp.extract_method()
-        with open("mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+os.path.basename(header_to_mock_path)), "a") as f:
+        output_file_path = "mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+header_to_mock)
+        output_file_folder = os.path.dirname(output_file_path)
+        try:
+            os.makedirs(output_file_folder)
+        except:
+            pass
+        with open(output_file_path, "a") as f:
                 f.write("#include \"%s\"\n\n"%header_to_mock_path)
         for m in methods_to_mock:
-            with open("mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+os.path.basename(header_to_mock_path)), "a") as f:
+            with open(output_file_path, "a") as f:
                 f.write(self.ctags_method_parse_line(m,f)+"\n")
 
 
@@ -136,7 +143,7 @@ class MockGenerator():
         for h in header_to_mock:
             print "Mocking %s"%h
             header_to_mock_path = self.find_header_to_mock(h)
-            self.gen_mock_header(header_to_mock_path)
+            self.gen_mock_header(header_to_mock_path, h)
             
 
 def main():
