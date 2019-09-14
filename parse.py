@@ -28,6 +28,16 @@ class CFileParser():
                 parsed_methods_list.append(m)
         return parsed_methods_list
 
+    def extract_method_from_source(self):
+        cmd = """ctags --language-force=C -x --_xformat="%%n:%%N:%%{typeref}:%%{signature}" --kinds-C=f %s"""%self.file_to_parse
+        methods_string = check_output(shlex.split(cmd))
+        methods_list = methods_string.splitlines()
+        parsed_methods_list = []         
+        for m in methods_list:
+            if(len(m)):
+                parsed_methods_list.append(m)
+        return parsed_methods_list
+
 class MockGenerator():
     def __init__(self, file_test, include_list, mock_prefix):
         self.file_test = file_test
@@ -52,14 +62,14 @@ class MockGenerator():
         raise Exception("Header to mock not found")
 
     def create_folder(self):
-        shutil.rmtree("build/mock/%s/"%os.path.basename(self.file_test[:-2]), ignore_errors=True)
-        os.makedirs("build/mock/%s/"%os.path.basename(self.file_test[:-2]))
+        shutil.rmtree("mock/%s/"%os.path.basename(self.file_test[:-2]), ignore_errors=True)
+        os.makedirs("mock/%s/"%os.path.basename(self.file_test[:-2]))
 
     def gen_mock_header(self, header_to_mock_path):
         cfp = CFileParser(header_to_mock_path)
         methods_to_mock = cfp.extract_method()
         for m in methods_to_mock:
-            with open("build/mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+os.path.basename(header_to_mock_path)), "a") as f:
+            with open("mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+os.path.basename(header_to_mock_path)), "a") as f:
                 f.write(self.ctags_method_parse_line(m)+"\n")
 
 
@@ -82,6 +92,12 @@ class MockGenerator():
                 sig_parsed.append(self.ctags_method_parse_one_arg(s))
         return sig_parsed
 
+    def write_type_def(self, signature):
+        print signature
+        if(("(*" in signature) and signature.count("(") == 2 and signature.count(")") == 2):
+             with open("mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+os.path.basename(header_to_mock_path)), "a") as f:
+                f.write("typedef %s\n"%signature)
+
     def ctags_method_parse_line(self, line):
         if(not len(line)):
             return
@@ -90,6 +106,8 @@ class MockGenerator():
         return_ = ref[3]
         sign = ref[4]
         parsed_sign = self.ctags_method_parse_sig(sign)
+        for p in parsed_sign:
+            self.write_type_def(p)
         func_type = "VALUE"
         start = ""
         if(return_ == "void"):

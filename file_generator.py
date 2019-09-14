@@ -38,7 +38,7 @@ class FileGenerator():
             f.write("generate_test_runner(${TEST_FILE})\n\n")
             f.write("add_executable(test_${FILE_TESTED}\n")
             f.write("   ${TEST_FILE}\n")
-            f.write("   build_runner/test_${FILE_TESTED}_Runner.c\n")
+            f.write("   build/test_runner/test_${FILE_TESTED}_Runner.c\n")
             f.write(")\n\n")
             f.write("generate_mock(${TEST_FILE})\n")
             f.write("target_include_directories(test_${FILE_TESTED} PUBLIC ${CMAKE_SOURCE_DIR}/build/mock/test_${FILE_TESTED}/)\n\n")

@@ -9,7 +9,7 @@ function(generate_test_runner array_c_file)
 	  #file(RELATIVE_PATH FILE_PATH ${CMAKE_SOURCE_DIR} ${dir})
 	  get_filename_component(FILE_NAME ${dir} NAME)
 	  string(REPLACE .c _Runner.c RUNNER_NAME ${FILE_NAME})
-	  execute_process(COMMAND ruby ${CMAKE_SOURCE_DIR}/vtunit/lib/unity/auto/generate_test_runner.rb ${dir} ${CMAKE_SOURCE_DIR}/build_runner/${RUNNER_NAME})
+	  execute_process(COMMAND python ${CMAKE_SOURCE_DIR}/vtunit/test_runner_generator.py --test_file ${dir})
 	endforeach()
 endfunction()
 
