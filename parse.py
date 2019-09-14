@@ -68,6 +68,8 @@ class MockGenerator():
     def gen_mock_header(self, header_to_mock_path):
         cfp = CFileParser(header_to_mock_path)
         methods_to_mock = cfp.extract_method()
+        with open("mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+os.path.basename(header_to_mock_path)), "a") as f:
+                f.write("#include \"%s\"\n\n"%header_to_mock_path)
         for m in methods_to_mock:
             with open("mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+os.path.basename(header_to_mock_path)), "a") as f:
                 f.write(self.ctags_method_parse_line(m,f)+"\n")
