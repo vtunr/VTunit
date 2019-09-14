@@ -66,6 +66,8 @@ class MockGenerator():
     def ctags_method_parse_one_arg(self, arg):
         if(arg == "void"):
             return ""
+        if(arg == "..."):
+            return arg
         if("[" and "]" in arg):
             index = arg.rfind(" ")
             arg = arg[:index]+" * "+arg[index:]
@@ -87,11 +89,18 @@ class MockGenerator():
         function_name = ref[1]
         return_ = ref[3]
         sign = ref[4]
-        if(return_ == "void"):
-            FUNC = "FAKE_VOID_FUNC("+function_name+" "
-        else:
-            FUNC = "FAKE_VALUE_FUNC("+return_+","+function_name+" "
         parsed_sign = self.ctags_method_parse_sig(sign)
+        func_type = "VALUE"
+        start = ""
+        if(return_ == "void"):
+            func_type = "VOID"
+        else:
+            start = return_+", "
+        post_type = ""
+        print "PARSE_SIGN : ", parsed_sign
+        if("..." in parsed_sign):
+            post_type = "_VARARG"
+        FUNC = "FAKE_%s_FUNC%s(%s%s "%(func_type, post_type,start, function_name)
         for sig in parsed_sign:
             FUNC += ", "+sig
         FUNC += ");"
