@@ -20,7 +20,8 @@ class Project:
         self.cmd_ctest = "ctest -V"
         self.cmd_gen_xml = "ruby ../vtunit/lib/unity/auto/parse_output.rb -xml Testing/Temporary/LastTest.log"
         self.cmd_ninja_clean = "ninja clean"
-
+        self.cmd_prebuild = "ninja prebuild"
+        self.cmd_postbuild = "ninja postbuild"
 
     def gen_project(self):
         if(self.cmake_gen.isCMakeListsGen()):
@@ -78,7 +79,11 @@ class Project:
         for test in list_test:
             print("\t %s"%test)
 
-    def run(self, filter):
+    def run(self, filter, ignore_postbuild, ignore_prebuild):
+        if(not ignore_prebuild):
+            os.chdir("build")
+            self.run_cmd(self.cmd_prebuild)
+            os.chdir("../")
         if(filter != None):
             list_test = self.list_test(filter)
             if(not len(list_test)):
@@ -87,16 +92,19 @@ class Project:
             for test in list_test:
                 print("Building ... %s"%test)
                 self.run_cmd(self.cmd_ninja+" test_"+test)
+            if(not ignore_postbuild):
+                self.run_cmd(self.cmd_postbuild)
             self.run_cmd(self.cmd_ctest+" -R "+filter)
             self.run_cmd(self.cmd_gen_xml)
             os.chdir("../")
         else:
             os.chdir("build")
             self.run_cmd(self.cmd_ninja)
+            if(not ignore_postbuild):
+                self.run_cmd(self.cmd_postbuild)
             self.run_cmd(self.cmd_ctest)
             self.run_cmd(self.cmd_gen_xml)
             os.chdir("../")
-
 
 def main():
     parser = argparse.ArgumentParser("VTunit")
@@ -119,6 +127,8 @@ def main():
     build.add_argument('--run', help='Run unit test (can be filtered)', action='store_true')
     build.add_argument('--filter', help='Filter unit test')
     build.add_argument('--list', help='List unit test (can be filtered)', action='store_true')
+    build.add_argument('--ignore_prebuild', help='Will not run prebuild', action='store_true')
+    build.add_argument('--ignore_postbuild', help='Will not run postbuild', action='store_true')
     args = parser.parse_args()
     pr = Project()
     if(args.command == "init"):
@@ -136,7 +146,7 @@ def main():
         if(args.cmake):
             pr.cmake()
         if(args.run):
-            pr.run(args.filter)
+            pr.run(args.filter, args.ignore_postbuild, args.ignore_prebuild)
         if(args.list):
             pr.print_test_list(args.filter)
 if __name__ == '__main__':
