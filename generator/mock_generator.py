@@ -56,7 +56,6 @@ class MockGenerator():
     def find_header_to_mock(self, header_to_mock):
         for i in self.include_list:
             path = os.path.join(os.path.realpath(i), header_to_mock)
-            print path
             if(os.path.isfile(path)):
                 return path
         raise Exception("Header to mock not found")
@@ -66,7 +65,6 @@ class MockGenerator():
         os.makedirs("mock/%s/"%os.path.basename(self.file_test[:-2]))
 
     def gen_mock_header(self, header_to_mock_path, header_to_mock):
-        print "HEADER TO MOCK",header_to_mock_path, header_to_mock
         cfp = CFileParser(header_to_mock_path)
         methods_to_mock = cfp.extract_method()
         output_file_path = "mock/%s/%s"%(os.path.basename(self.file_test[:-2]), "mock_"+header_to_mock)
@@ -92,7 +90,6 @@ class MockGenerator():
             arg = arg[:index]+" * "+arg[index:]
         if("(*" in arg and arg.count("(") == 2 and arg.count(")") == 2):
             return [True, arg]
-        print arg, "Not a pointer to function"
         return [False, arg[:arg.rfind(" ")]]
 
     def ctags_method_parse_sig(self, signature):
@@ -118,7 +115,6 @@ class MockGenerator():
         sign = ref[4]
         parsed_sign = self.ctags_method_parse_sig(sign)
         for t in parsed_sign[0]:
-            print "TYPEDEF",t
             writer.write("typedef %s;\n"%t)
         func_type = "VALUE"
         start = ""
@@ -127,12 +123,10 @@ class MockGenerator():
         else:
             start = return_+", "
         post_type = ""
-        print "PARSE_SIGN : ", parsed_sign[1]
         if("..." in parsed_sign[1]):
             post_type = "_VARARG"
         FUNC = "FAKE_%s_FUNC%s(%s%s "%(func_type, post_type,start, function_name)
         for sig in parsed_sign[1]:
-            print "SIG",sig
             FUNC += ", "+sig
         FUNC += ");"
         return FUNC
@@ -141,7 +135,6 @@ class MockGenerator():
         self.create_folder()
         header_to_mock = self.extract_mock_header()
         for h in header_to_mock:
-            print "Mocking %s"%h
             header_to_mock_path = self.find_header_to_mock(h)
             self.gen_mock_header(header_to_mock_path, h)
             
@@ -152,7 +145,6 @@ def main():
     parser.add_argument("--include", nargs='+')
     parser.add_argument("--mock_prefix")
     args = parser.parse_args()
-    print args.include
     MockGenerator(args.test_file, args.include, args.mock_prefix)
   
 

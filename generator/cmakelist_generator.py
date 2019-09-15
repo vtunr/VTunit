@@ -6,7 +6,6 @@ class CMakeListsGenerator():
             self.test_path = os.getcwd()
         else:
             self.test_path = test_path
-        print self.test_path
 
     def isCMakeListsGen(self):
         return os.path.exists(os.path.join(self.test_path, "CMakeLists.txt"))

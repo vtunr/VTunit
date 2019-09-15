@@ -1,4 +1,4 @@
-from parse import CFileParser
+from mock_generator import CFileParser
 import os
 import shutil
 import argparse
@@ -62,7 +62,6 @@ class TestRunnerGenerator():
             f.write("\n")
 
     def gen_func(self):
-        print self.method_list
         for func in self.method_list:
             func_splt = func.split(":")
             with open(os.path.join(self.output_folder, self.runner_name), 'a') as f:
