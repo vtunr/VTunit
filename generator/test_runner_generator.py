@@ -97,7 +97,7 @@ void resetTest(void)
 }\n\n""")
 
     def gen_main(self):
-        with open(os.path.join(self.output_folder, self.runner_name,), 'a') as f:
+        with open(os.path.join(self.output_folder, self.runner_name), 'a') as f:
             f.write("int main(void)\n")
             f.write("{\n")
             f.write("\tsuite_setup();\n")

@@ -2,8 +2,11 @@ function(generate_test_runner test_file)
 	#file(RELATIVE_PATH FILE_PATH ${CMAKE_SOURCE_DIR} ${dir})
 	get_filename_component(FILE_NAME ${test_file} NAME)
 	string(REPLACE .c _Runner.c RUNNER_NAME ${FILE_NAME})
-	add_custom_command(OUTPUT test_runner/${RUNNER_NAME}
-	COMMAND python ${CMAKE_SOURCE_DIR}/vtunit/generator/test_runner_generator.py --test_file ${test_file})
+	add_custom_command(OUTPUT 
+		test_runner/${RUNNER_NAME}
+	COMMAND python ${CMAKE_SOURCE_DIR}/vtunit/generator/test_runner_generator.py --test_file ${test_file}
+	DEPENDS ${test_file}
+)
 endfunction()
 
 function(generate_mock test_file)

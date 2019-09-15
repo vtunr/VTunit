@@ -22,7 +22,7 @@ class FileGenerator():
     def generate_test_c_file(self):
         with open(os.path.join(self.test_dest, self.test_file_name)+".c", 'w') as f:
             f.write("#include \"unity.h\"\n")
-            f.write("#include \"fff.h\"\n\n")
+            f.write("#include \"fff.h\"\n")
             f.write("DEFINE_FFF_GLOBALS\n\n")
             f.write("void setUp(void)\n")
             f.write("{\n\n")
