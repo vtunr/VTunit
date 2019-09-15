@@ -1,8 +1,8 @@
 
 import os
 import argparse
-from cmakelist_generator import *
-from file_generator import *
+from generator.cmakelist_generator import *
+from generator.file_generator import *
 import subprocess
 from subprocess import check_output
 import shutil
@@ -41,7 +41,7 @@ class Project:
         os.chdir("build")
         self.run_cmd(self.cmd_ninja_clean)
         os.chdir("../")
-        
+
     def run_cmd(self, cmd):
         ret = subprocess.call(cmd, shell = True)
         if(ret):

@@ -15,7 +15,17 @@ If it's already in a git repository, you can add it as submodule :
 ## Package to install (if you choose local build)
 
 On ubuntu/WSL :
+
 * `sudo apt-get install cmake ninja-build ruby`
+* You'll also need `universal_ctag` :
+```
+git clone https://github.com/universal-ctags/ctags.git
+cd ctags
+./autogen.sh 
+./configure
+make
+sudo make install
+``` 
 
 # Setup unit test for a project
 
@@ -33,7 +43,17 @@ It will generate into the test folder:
 
 You then need to add the c file you want to compile for your test in the `test_{file_to_test}.cmake`.
 
-You can also add include in `CMakeLists.txt`
+You can also add include in `include.cmake`
+
+# Automatic mocking
+
+You can know automatically mock header.
+
+You just need to add `mock_` prefix to the header you want to include :
+
+`#include "mock_my_header.h"`
+
+`#include "mock_my_folder/my_header.h"`
 
 # Running test
 
