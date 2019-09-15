@@ -1,9 +1,3 @@
-#function to generate the test runner
-function(init_test_runner)
-    file(REMOVE_RECURSE ${CMAKE_SOURCE_DIR}/build_runner)
-    file(MAKE_DIRECTORY ${CMAKE_SOURCE_DIR}/build_runner)
-endfunction()
-
 function(generate_test_runner test_file)
 	#file(RELATIVE_PATH FILE_PATH ${CMAKE_SOURCE_DIR} ${dir})
 	get_filename_component(FILE_NAME ${test_file} NAME)
@@ -21,4 +15,14 @@ function(generate_mock test_file)
 	add_dependencies(${FILE_NAME} mock_${FILE_NAME})
 endfunction()
 
-init_test_runner()
+
+list(APPEND PREBUILD_CMD echo Running PREBUILD)
+list(APPEND POSTBUILD_CMD echo Running POSTBUILD)
+function(define_prebuild)
+	message(STATUS "Prebuild is ${PREBUILD_CMD}")
+	add_custom_target(prebuild ${PREBUILD_CMD})
+endfunction()
+
+function(define_postbuild)
+	add_custom_target(postbuild ${POSTBUILD_CMD})
+endfunction()

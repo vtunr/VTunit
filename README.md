@@ -47,13 +47,22 @@ You can also add include in `include.cmake`
 
 # Automatic mocking
 
-You can know automatically mock header.
+You can automatically mock header.
 
 You just need to add `mock_` prefix to the header you want to include :
 
 `#include "mock_my_header.h"`
 
 `#include "mock_my_folder/my_header.h"`
+
+# Prebuild / Postbuild
+
+There is a way to run command before and after build (not after run)
+
+You need to add :
+
+* `list(APPEND PREBUILD_CMD && cmd_you_want)` in `prebuild.cmake`
+* `list(APPEND POSTBUILD_CMD && cmd_you_want)` in `postbuild.cmake`
 
 # Running test
 
@@ -65,8 +74,11 @@ Running in WSL or linux :
 * To clean : `python vtunit/vtunit.py build --clean`
 
 You can also filter the test you want to run :
+
 * To list : `python vtunit/vtunit.py build --list --filter {my_regex}` (optional `--filter`)
 * To filter : `python vtunit/vtunit.py build --run --filter {my_regex}`
+
+You can also ignore prebuild/postbuild command by adding `--ignore_prebuild` and `--ignore_postbuild`
 
 # TODO :
 
