@@ -112,6 +112,7 @@ class Project:
 
 
 def buildvtunitDockerImage(docker, docker_path):
+    print(docker_path)
     (i, log) = docker.images.build(tag="vtunit", path=docker_path)
     for l in log:
         field, value = list(l.items())[0]
@@ -129,25 +130,25 @@ def printLogContainer(cont):
 #TODO : Set dockerfile, setpath to mount
 def runCommandvtunitDocker(docker, volume_to_mount, args):
     try:
-        if("--docker" in args):
-            index = args.index("--docker")
-            try:
-                if(not args[index+1].startswith("-") and not args[index+1].startswith("--")):
-                    args.remove(args[index+1])
-                args.remove("--docker")
-            except:
-                pass
-        cmd = "/bin/bash -c 'python "
+        print(args)
+        indices = [i for i, x in enumerate(args) if "--docker_" in x]
+        print(indices)
+        for idx in indices:
+            print(idx)
+            args.remove(args[idx])
+            args.remove(args[idx])
+            indices = [i for i, x in enumerate(args) if "--docker_" in x]
+        cd_path = os.path.relpath(os.path.join(os.path.dirname(os.path.realpath(__file__)),"../"), volume_to_mount)
+        cmd = "/bin/bash -c 'cd %s && python3 "%cd_path
         for a in args:
             cmd += a+" "
         cmd.strip()
         cmd += "'"
+        cmd.encode('utf8')
         volume_to_mount = os.path.realpath(volume_to_mount)
-        cd_path = os.path.relpath(os.path.join(os.path.dirname(os.path.realpath(__file__)),"../"), volume_to_mount)
-
         cont = docker.containers.run(
             image="vtunit",
-            command="/bin/bash -c cd %s "%cd_path+cmd,
+            command=cmd,
             volumes={volume_to_mount: {'bind': '/tmp/project', 'mode': 'rw'}},
             tty= True,
             stdout=True,
@@ -160,6 +161,13 @@ def runCommandvtunitDocker(docker, volume_to_mount, args):
 
 def main():
     parser = argparse.ArgumentParser("VTunit")
+    
+    parser.add_argument('--docker_build',
+                       help='Dockerfile to use', action="store_true")    
+    parser.add_argument('--docker_file_dir',
+                       help='Dockerfile to use', dest="docker_file_dir")
+    parser.add_argument('--docker_volume',
+                       help='Dockerfile to use', dest="docker_volume")
     subparser = parser.add_subparsers(dest='command')
     init = subparser.add_parser('init', help='Init project')
     create_test = subparser.add_parser('new', help='Create new unit test')
@@ -188,22 +196,20 @@ def main():
     build.add_argument('--ignore_postbuild',
                        help='Will not run postbuild', action='store_true')
                        
-    dockercmd = subparser.add_parser('docker', help='Specify docker')
-    dockercmd.add_argument('--build_image', help='Build docker image')
-    dockercmd.add_argument('--docker_file', help='Specify Dockerfile to use (optional)')
-    dockercmd.add_argument('--volume_to_mount', help='Specify volume to mount in docker (required)')
-
     args = parser.parse_args()
     pr = Project()
-    if(args.command):
+    if(args.docker_build):
         client = docker.from_env()
         docker_file_path = None
-        if(args.docker_file == None):
-            docker_file_path = "Dockerfile"
+        if(args.docker_file_dir == None):
+            docker_file_path = "./vtunit/"
+        else:
+            docker_file_path = args.docker_file_dir
         docker_file_path = os.path.realpath(docker_file_path)
-        if(args.build_image):
-            buildvtunitDockerImage(client, docker_file_path)
-        runCommandvtunitDocker(client, args.volume_to_mount, sys.argv)
+        buildvtunitDockerImage(client, docker_file_path)
+    if(args.docker_volume):    
+        client = docker.from_env()
+        runCommandvtunitDocker(client, args.docker_volume, sys.argv)
         return
     if(args.command == "init"):
         print("Generating project")

@@ -80,10 +80,25 @@ You can also filter the test you want to run :
 
 You can also ignore prebuild/postbuild command by adding `--ignore_prebuild` and `--ignore_postbuild`
 
+
+# Running in docker
+
+You can run everything through docker :
+
+* Building the image : `python3 vtunit/vtunit.py --docker_build {--docker_file_dir docker_file_dir}`
+* Running script on docker : `python3 vtunit/vtunit.py --docker_volume {volume_to_mount} {regular_command}`
+
+You can create your own dockerfile based on the one from this repository like this :
+
+```
+FROM vtunit:latest
+Whatever you need to do
+```
+
+And then call the `--docker_build`, it will use your own Dockerfile and use from now on
+
 # TODO :
 
 * Improve argparse
 * Add setup.py so we don't have to clone it for each project
-* Add possibility to run it in a docker container
-
 
