@@ -40,9 +40,9 @@ class CFileParser():
 
 class MockGenerator():
     def __init__(self, file_test, include_list, mock_prefix):
-        self.file_test = file_test
+        self.file_test = file_test.encode('utf8')
         self.include_list = include_list
-        self.mock_prefix = mock_prefix
+        self.mock_prefix = mock_prefix.encode('utf8')
         self.gen_all_mock()
 
     def extract_mock_header(self):

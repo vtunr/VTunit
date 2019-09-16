@@ -7,6 +7,8 @@ import subprocess
 from subprocess import check_output
 import shutil
 import re
+import sys
+import docker
 
 class Project:
     def __init__(self):
@@ -16,7 +18,7 @@ class Project:
 
     def define_command(self):
         self.cmd_cmake = "cmake .. -GNinja"
-        self.cmd_ninja =  "ninja"
+        self.cmd_ninja = "ninja"
         self.cmd_ctest = "ctest -V"
         self.cmd_gen_xml = "ruby ../vtunit/lib/unity/auto/parse_output.rb -xml Testing/Temporary/LastTest.log"
         self.cmd_ninja_clean = "ninja clean"
@@ -25,15 +27,15 @@ class Project:
 
     def gen_project(self):
         if(self.cmake_gen.isCMakeListsGen()):
-            #TODO : Update current config from command line
+            # TODO : Update current config from command line
             raise Exception("Can't gen a project already init")
         self.cmake_gen.CreateCMakeLists()
 
-    def create_new_unit_test(self, file_name, extra_include = None, test_folder = None):
+    def create_new_unit_test(self, file_name, extra_include=None, test_folder=None):
         if(not self.cmake_gen.isCMakeListsGen()):
             raise Exception("Project not found")
         FG = FileGenerator(file_name, test_folder, extra_include, False)
-        self.cmake_gen.AddTest("test_%s.cmake"%file_name[:-2])
+        self.cmake_gen.AddTest("test_%s.cmake" % file_name[:-2])
 
     def clean_all(self):
         shutil.rmtree("build", ignore_errors=True)
@@ -44,9 +46,10 @@ class Project:
         os.chdir("../")
 
     def run_cmd(self, cmd):
-        ret = subprocess.call(cmd, shell = True)
+        ret = subprocess.call(cmd, shell=True)
         if(ret):
             exit(ret)
+
     def cmake(self):
         try:
             os.mkdir("build")
@@ -55,6 +58,7 @@ class Project:
         os.chdir("build")
         self.run_cmd(self.cmd_cmake)
         os.chdir("../")
+
     def list_test(self, filter):
         os.chdir("build")
         cmd = "ctest -N".split(" ")
@@ -71,13 +75,13 @@ class Project:
                     list_test.append(splt)
         os.chdir("../")
         return list_test
-    
+
     def print_test_list(self, filter):
         list_test = self.list_test(filter)
         len_test = len(list_test)
-        print("%u test found :"%len_test)
+        print("%u test found :" % len_test)
         for test in list_test:
-            print("\t %s"%test)
+            print("\t %s" % test)
 
     def run(self, filter, ignore_postbuild, ignore_prebuild):
         if(not ignore_prebuild):
@@ -90,7 +94,7 @@ class Project:
                 raise Exception("No test found")
             os.chdir("build")
             for test in list_test:
-                print("Building ... %s"%test)
+                print("Building ... %s" % test)
                 self.run_cmd(self.cmd_ninja+" test_"+test)
             if(not ignore_postbuild):
                 self.run_cmd(self.cmd_postbuild)
@@ -106,33 +110,103 @@ class Project:
             self.run_cmd(self.cmd_gen_xml)
             os.chdir("../")
 
+
+def buildvtunitDockerImage(docker, docker_path):
+    (i, log) = docker.images.build(tag="vtunit", path=docker_path)
+    for l in log:
+        field, value = list(l.items())[0]
+        print(field, value, end='')
+
+
+def printLogContainer(cont):
+    logs = ""
+    for l in cont.logs(stdout=True, stderr=True, stream=True):
+        logs += l.decode()
+    logs = logs.split("\n")
+    for log in logs:
+        print(log)
+
+#TODO : Set dockerfile, setpath to mount
+def runCommandvtunitDocker(docker, volume_to_mount, args):
+    try:
+        if("--docker" in args):
+            index = args.index("--docker")
+            try:
+                if(not args[index+1].startswith("-") and not args[index+1].startswith("--")):
+                    args.remove(args[index+1])
+                args.remove("--docker")
+            except:
+                pass
+        cmd = "/bin/bash -c 'python "
+        for a in args:
+            cmd += a+" "
+        cmd.strip()
+        cmd += "'"
+        volume_to_mount = os.path.realpath(volume_to_mount)
+        cd_path = os.path.relpath(os.path.join(os.path.dirname(os.path.realpath(__file__)),"../"), volume_to_mount)
+
+        cont = docker.containers.run(
+            image="vtunit",
+            command="/bin/bash -c cd %s "%cd_path+cmd,
+            volumes={volume_to_mount: {'bind': '/tmp/project', 'mode': 'rw'}},
+            tty= True,
+            stdout=True,
+            stderr=True,
+            detach = True)
+        printLogContainer(cont)
+    except Exception as e:
+        print(e)
+
+
 def main():
     parser = argparse.ArgumentParser("VTunit")
     subparser = parser.add_subparsers(dest='command')
     init = subparser.add_parser('init', help='Init project')
     create_test = subparser.add_parser('new', help='Create new unit test')
     create_test.add_argument("--file_name",
-        help='C File name to test'
-    )
+                             help='C File name to test'
+                             )
     create_test.add_argument("--extra_include",
-        help='New include to add for this test'
-    )
+                             help='New include to add for this test'
+                             )
     create_test.add_argument("--test_folder",
-        help='Where to generate the files'
-    )
+                             help='Where to generate the files'
+                             )
     build = subparser.add_parser('build', help='Build things')
-    build.add_argument('--clean', help='Clean unit test (Ninja)', action='store_true')
-    build.add_argument('--clean_all', help='Clean all unit test (CMake+Ninja)', action='store_true')
+    build.add_argument(
+        '--clean', help='Clean unit test (Ninja)', action='store_true')
+    build.add_argument(
+        '--clean_all', help='Clean all unit test (CMake+Ninja)', action='store_true')
     build.add_argument('--cmake', help='Run cmake', action='store_true')
-    build.add_argument('--run', help='Run unit test (can be filtered)', action='store_true')
+    build.add_argument(
+        '--run', help='Run unit test (can be filtered)', action='store_true')
     build.add_argument('--filter', help='Filter unit test')
-    build.add_argument('--list', help='List unit test (can be filtered)', action='store_true')
-    build.add_argument('--ignore_prebuild', help='Will not run prebuild', action='store_true')
-    build.add_argument('--ignore_postbuild', help='Will not run postbuild', action='store_true')
+    build.add_argument(
+        '--list', help='List unit test (can be filtered)', action='store_true')
+    build.add_argument('--ignore_prebuild',
+                       help='Will not run prebuild', action='store_true')
+    build.add_argument('--ignore_postbuild',
+                       help='Will not run postbuild', action='store_true')
+                       
+    dockercmd = subparser.add_parser('docker', help='Specify docker')
+    dockercmd.add_argument('--build_image', help='Build docker image')
+    dockercmd.add_argument('--docker_file', help='Specify Dockerfile to use (optional)')
+    dockercmd.add_argument('--volume_to_mount', help='Specify volume to mount in docker (required)')
+
     args = parser.parse_args()
     pr = Project()
+    if(args.command):
+        client = docker.from_env()
+        docker_file_path = None
+        if(args.docker_file == None):
+            docker_file_path = "Dockerfile"
+        docker_file_path = os.path.realpath(docker_file_path)
+        if(args.build_image):
+            buildvtunitDockerImage(client, docker_file_path)
+        runCommandvtunitDocker(client, args.volume_to_mount, sys.argv)
+        return
     if(args.command == "init"):
-        print "Generating project"
+        print("Generating project")
         pr.gen_project()
     if(args.command == "new"):
         if(args.extra_include or args.test_folder):
@@ -149,5 +223,7 @@ def main():
             pr.run(args.filter, args.ignore_postbuild, args.ignore_prebuild)
         if(args.list):
             pr.print_test_list(args.filter)
+
+
 if __name__ == '__main__':
     main()

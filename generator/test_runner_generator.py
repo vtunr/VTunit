@@ -54,16 +54,16 @@ class TestRunnerGenerator():
             f.write("#include <stdio.h>\n")
             f.write("#include \"fff.h\"\n")
             for include in self.include_list:
-                if(not include.startswith("mock_") 
-                    and "unity.h" not in include 
-                    and "fff.h" not in include
-                    and not include.endswith(".c")):
+                if(not include.startswith(b"mock_") 
+                    and b"unity.h" not in include 
+                    and b"fff.h" not in include
+                    and not include.endswith(b".c")):
                     f.write("#include \"%s\"\n"%include)
             f.write("\n")
 
     def gen_func(self):
         for func in self.method_list:
-            func_splt = func.split(":")
+            func_splt = func.split(b":")
             with open(os.path.join(self.output_folder, self.runner_name), 'a') as f:
                 f.write("extern %s %s%s;\n"%(func_splt[3], func_splt[1],func_splt[4]))
 
@@ -103,8 +103,8 @@ void resetTest(void)
             f.write("\tsuite_setup();\n")
             f.write("\tUnityBegin(\"%s\");\n"%os.path.realpath(self.test_file))
             for func in self.method_list:
-                func_splt = func.split(":")
-                if(func_splt[1].startswith("test_")):
+                func_splt = func.split(b":")
+                if(func_splt[1].startswith(b"test_")):
                     f.write("\tRUN_TEST(%s, %s);\n"%(func_splt[1], func_splt[0]))
             f.write("\treturn suite_teardown(UnityEnd());\n")
             f.write("}")
