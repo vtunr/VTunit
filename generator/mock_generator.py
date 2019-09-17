@@ -118,7 +118,7 @@ class MockGenerator():
             writer.write("typedef %s;\n"%t)
         func_type = "VALUE"
         start = ""
-        if(return_ == "void"):
+        if("void" in return_ and not "*" in return_):
             func_type = "VOID"
         else:
             start = return_+", "
