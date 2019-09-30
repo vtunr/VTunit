@@ -98,6 +98,10 @@ class OutputGenerator:
                         f.write("""\t<testcase classname="%s" name="%s">\n)"""%(t.file_name, t.test_name))
                         f.write("""\t\t<failure type="%s"/>\n"""%t.fail_reason.replace('"', "&quot;").replace("'","&apos;").replace("\n",""))
                         f.write("\t</testcase>\n")
+                    if(t.status == "IGNORE"):
+                        f.write("""\t<testcase classname="%s" name="%s">\n)"""%(t.file_name, t.test_name))
+                        f.write("""\t\t<skipped message="Skipped"/>\n""")
+                        f.write("\t</testcase>\n")
             f.write("</testsuite>\n")
 
 def main():
