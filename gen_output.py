@@ -20,10 +20,10 @@ class FileTested:
         self.test.append(val)
 
     def print_summary(self):
-        print('{s:{c}^{n}}'.format(s=self.name,n=64,c='='))
+        print('{s:{c}^{n}}'.format(s=" "+self.name+" ",n=72,c='='))
         for t in self.test:
             print('{:<64} {:>0}'.format(t.test_name, t.result))
-        print("="*64)
+        print("="*72)
 
 class FilesTested:
     def __init__(self):
@@ -49,15 +49,13 @@ class FilesTested:
             f.print_summary()
 
 def process(file_name):
-    print('Parsing file: %s'%file_name)
-
     test_passed = 0
     test_failed = 0
     test_ignored = 0
     ft = FilesTested()
     test_array = []
     print('')
-    print('{s:{c}^{n}}'.format(s="Results",n=64,c='='))
+    print('{s:{c}^{n}}'.format(s=" Results ",n=72,c='='))
     print('')
     with open(file_name, 'r') as f:
         lines = f.readlines()
@@ -76,97 +74,9 @@ def process(file_name):
                     test_failed +=1
                     ft.add_test_to_file(line_array)
     ft.print_summary()
-    print(" Pass : %u"%test_passed)
-    print(" Failed : %u"%test_failed)
-    print(" Ignored : %u"%test_ignored)
-    print('='*64)
-                
-            #if(r)
+    print("Pass : %u"%test_passed)
+    print("Failed : %u"%test_failed)
+    print("Ignored : %u"%test_ignored)
+    print('='*72)
+
 process(sys.argv[1])
-
-# check if the output is fixture output (with verbose flag "-v")
-    #   if (line.start_with? 'TEST(') || (line.start_with? 'IGNORE_TEST(')
-    #     line_array = prepare_fixture_line(line)
-    #     if line.include? ' PASS'
-    #       test_passed_unity_fixture(line_array)
-    #       @test_passed += 1
-    #     elsif line.include? 'FAIL'
-    #       test_failed_unity_fixture(line_array)
-    #       @test_failed += 1
-    #     elsif line.include? 'IGNORE'
-    #       test_ignored_unity_fixture(line_array)
-    #       @test_ignored += 1
-    #     end
-    #   # normal output / fixture output (without verbose "-v")
-    #   elsif line.include? ':PASS'
-    #     test_passed(line_array)
-    #     @test_passed += 1
-    #   elsif line.include? ':FAIL'
-    #     test_failed(line_array)
-    #     @test_failed += 1
-    #   elsif line.include? ':IGNORE:'
-    #     test_ignored(line_array)
-    #     @test_ignored += 1
-    #   elsif line.include? ':IGNORE'
-    #     line_array.push('No reason given')
-    #     test_ignored(line_array)
-    #     @test_ignored += 1
-    #   end
-    #   @total_tests = @test_passed + @test_failed + @test_ignored
-#    File.open(file_name).each do |line|
-      # Typical test lines look like these:
-      # ----------------------------------------------------
-      # 1. normal output:
-      # <path>/<test_file>.c:36:test_tc1000_opsys:FAIL: Expected 1 Was 0
-      # <path>/<test_file>.c:112:test_tc5004_initCanChannel:IGNORE: Not Yet Implemented
-      # <path>/<test_file>.c:115:test_tc5100_initCanVoidPtrs:PASS
-      #
-      # 2. fixture output
-      # <path>/<test_file>.c:63:TEST(<test_group>, <test_function>):FAIL: Expected 0x00001234 Was 0x00005A5A
-      # <path>/<test_file>.c:36:TEST(<test_group>, <test_function>):IGNORE
-      # Note: "PASS" information won't be generated in this mode
-      #
-      # 3. fixture output with verbose information ("-v")
-      # TEST(<test_group, <test_file>)<path>/<test_file>:168::FAIL: Expected 0x8D Was 0x8C
-      # TEST(<test_group>, <test_file>)<path>/<test_file>:22::IGNORE: This Test Was Ignored On Purpose
-      # IGNORE_TEST(<test_group, <test_file>)
-      # TEST(<test_group, <test_file>) PASS
-      #
-      # Note: Where path is different on Unix vs Windows devices (Windows leads with a drive letter)!
-    #   detect_os_specifics(line)
-    #   line_array = line.split(':')
-
-    #   # If we were able to split the line then we can look to see if any of our target words
-    #   # were found. Case is important.
-    #   next unless (line_array.size >= 4) || (line.start_with? 'TEST(') || (line.start_with? 'IGNORE_TEST(')
-
-    #   # check if the output is fixture output (with verbose flag "-v")
-    #   if (line.start_with? 'TEST(') || (line.start_with? 'IGNORE_TEST(')
-    #     line_array = prepare_fixture_line(line)
-    #     if line.include? ' PASS'
-    #       test_passed_unity_fixture(line_array)
-    #       @test_passed += 1
-    #     elsif line.include? 'FAIL'
-    #       test_failed_unity_fixture(line_array)
-    #       @test_failed += 1
-    #     elsif line.include? 'IGNORE'
-    #       test_ignored_unity_fixture(line_array)
-    #       @test_ignored += 1
-    #     end
-    #   # normal output / fixture output (without verbose "-v")
-    #   elsif line.include? ':PASS'
-    #     test_passed(line_array)
-    #     @test_passed += 1
-    #   elsif line.include? ':FAIL'
-    #     test_failed(line_array)
-    #     @test_failed += 1
-    #   elsif line.include? ':IGNORE:'
-    #     test_ignored(line_array)
-    #     @test_ignored += 1
-    #   elsif line.include? ':IGNORE'
-    #     line_array.push('No reason given')
-    #     test_ignored(line_array)
-    #     @test_ignored += 1
-    #   end
-    #   @total_tests = @test_passed + @test_failed + @test_ignored
-    # end
