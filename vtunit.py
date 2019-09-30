@@ -43,9 +43,10 @@ class Project:
         self.run_cmd(self.cmd_ninja_clean)
         os.chdir("../")
 
-    def run_cmd(self, cmd):
+    def run_cmd(self, cmd, ignore_error = False):
+        print("Running %s"%cmd)
         ret = subprocess.call(cmd, shell = True)
-        if(ret):
+        if(ret and not ignore_error):
             exit(ret)
     def cmake(self):
         try:
@@ -94,7 +95,7 @@ class Project:
                 self.run_cmd(self.cmd_ninja+" test_"+test)
             if(not ignore_postbuild):
                 self.run_cmd(self.cmd_postbuild)
-            self.run_cmd(self.cmd_ctest+" -R "+filter)
+            self.run_cmd(self.cmd_ctest+" -R "+filter, True)
             self.run_cmd(self.cmd_gen_xml)
             os.chdir("../")
         else:
@@ -102,7 +103,7 @@ class Project:
             self.run_cmd(self.cmd_ninja)
             if(not ignore_postbuild):
                 self.run_cmd(self.cmd_postbuild)
-            self.run_cmd(self.cmd_ctest)
+            self.run_cmd(self.cmd_ctest, True)
             self.run_cmd(self.cmd_gen_xml)
             os.chdir("../")
 
