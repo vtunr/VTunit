@@ -96,7 +96,7 @@ class OutputGenerator:
                         f.write("""\t<testcase classname="%s" name="%s"/>\n"""%(t.file_name, t.test_name))
                     if(t.status == "FAIL"):
                         f.write("""\t<testcase classname="%s" name="%s">\n)"""%(t.file_name, t.test_name))
-                        f.write("""\t\t<failure type="%s"/>\n"""%t.fail_reason.replace('"', "&quot;").replace("'","&apos;").replace("\n",""))
+                        f.write("""\t\t<failure type="FAILED_ASSERT" message="%s"/>\n"""%t.fail_reason.replace('"', "&quot;").replace("'","&apos;").replace("\n",""))
                         f.write("\t</testcase>\n")
                     if(t.status == "IGNORE"):
                         f.write("""\t<testcase classname="%s" name="%s">\n)"""%(t.file_name, t.test_name))
