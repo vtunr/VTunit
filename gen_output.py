@@ -48,35 +48,41 @@ class FilesTested:
         for f in self.file_tested:
             f.print_summary()
 
-def process(file_name):
-    test_passed = 0
-    test_failed = 0
-    test_ignored = 0
-    ft = FilesTested()
-    test_array = []
-    print('')
-    print('{s:{c}^{n}}'.format(s=" Results ",n=72,c='='))
-    print('')
-    with open(file_name, 'r') as f:
-        lines = f.readlines()
-        for r in lines:
-            line_array = r.split(":")
-            if(((len(line_array) >= 4) or r.startswith('TEST(') or r.startswith('IGNORE_TEST(')) and not ("time elapsed" in r)):
-                file_name = os.path.splitext(os.path.basename(line_array[0]))[0]
-                ft.add_file_tested(file_name)
-                if("PASS" in r):
-                    test_passed +=1
-                    ft.add_test_to_file(line_array)
-                if("FAIL" in r):
-                    test_failed +=1
-                    ft.add_test_to_file(line_array)
-                if("IGNORE" in r):
-                    test_failed +=1
-                    ft.add_test_to_file(line_array)
-    ft.print_summary()
-    print("Pass : %u"%test_passed)
-    print("Failed : %u"%test_failed)
-    print("Ignored : %u"%test_ignored)
-    print('='*72)
+class OutputGenerator:
+    def __init__(self, file_name):
+        self.file_name = file_name
+        self.ft = FilesTested()
+        self.test_passed = 0
+        self.test_failed = 0
+        self.test_ignored = 0
 
-process(sys.argv[1])
+    def process_file(self):
+        test_array = []
+        print('')
+        print('{s:{c}^{n}}'.format(s=" Results ",n=72,c='='))
+        print('')
+        with open(self.file_name, 'r') as f:
+            lines = f.readlines()
+            for r in lines:
+                line_array = r.split(":")
+                if(((len(line_array) >= 4) or r.startswith('TEST(') or r.startswith('IGNORE_TEST(')) and not ("time elapsed" in r)):
+                    self.file_name = os.path.splitext(os.path.basename(line_array[0]))[0]
+                    self.ft.add_file_tested(self.file_name)
+                    if("PASS" in r):
+                        self.test_passed +=1
+                        self.ft.add_test_to_file(line_array)
+                    if("FAIL" in r):
+                        self.test_failed +=1
+                        self.ft.add_test_to_file(line_array)
+                    if("IGNORE" in r):
+                        self.test_failed +=1
+                        self.ft.add_test_to_file(line_array)
+        self.ft.print_summary()
+        print("Pass : %u"%self.test_passed)
+        print("Failed : %u"%self.test_failed)
+        print("Ignored : %u"%self.test_ignored)
+        print('='*72)
+
+
+g = OutputGenerator(sys.argv[1])
+g.process_file()
