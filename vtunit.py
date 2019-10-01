@@ -18,7 +18,7 @@ class Project:
         self.cmd_cmake = "cmake .. -GNinja"
         self.cmd_ninja =  "ninja"
         self.cmd_ctest = "ctest -V"
-        self.cmd_gen_xml = "ruby ../vtunit/lib/unity/auto/parse_output.rb -xml Testing/Temporary/LastTest.log"
+        self.cmd_gen_xml = "python ../vtunit/generator/output_generator.py --log_file Testing/Temporary/LastTest.log --junit_xml"
         self.cmd_ninja_clean = "ninja clean"
         self.cmd_prebuild = "ninja prebuild"
         self.cmd_postbuild = "ninja postbuild"
