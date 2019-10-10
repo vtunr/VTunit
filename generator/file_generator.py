@@ -34,10 +34,10 @@ class FileGenerator():
     def generate_test_cmake_file(self):
         with open(os.path.join(self.test_dest, self.test_file_name)+".cmake", 'w') as f:
             f.write("set(FILE_TESTED %s)\n"%self.c_file_name[:-2])
-            f.write("set(TEST_FILE test/test_${FILE_TESTED}.c)")
+            f.write("set(TEST_FILE ${CMAKE_SOURCER_DIR}/test/test_${FILE_TESTED}.c)\n")
             f.write("generate_test_runner(${TEST_FILE})\n\n")
             f.write("add_executable(test_${FILE_TESTED}\n")
-            f.write("   ${TEST_FILE}\n")
+            f.write("   test/test_${FILE_TESTED}.c\n")
             f.write("   build/test_runner/test_${FILE_TESTED}_Runner.c\n")
             f.write(")\n\n")
             f.write("generate_mock(${TEST_FILE})\n")
