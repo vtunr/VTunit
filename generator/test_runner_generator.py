@@ -54,10 +54,11 @@ class TestRunnerGenerator():
             f.write("#include <stdio.h>\n")
             f.write("#include \"fff.h\"\n")
             for include in self.include_list:
-                if(not include.startswith("mock_") 
-                    and "unity.h" not in include 
+                if("unity.h" not in include 
                     and "fff.h" not in include
                     and not include.endswith(".c")):
+                    if(include.startswith("mock_")):
+                        include = include[5:]
                     f.write("#include \"%s\"\n"%include)
             f.write("\n")
 
