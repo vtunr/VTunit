@@ -62,8 +62,9 @@ class Project:
         out = check_output(cmd)
         list_test = []
         for i in out.split("\n"):
-            if("Test #" in i):
-                splt = i.split(": ")[1].strip()
+            test_splt = i.split(": ")
+            if(len(test_splt)>1 and test_splt[0].strip().startswith("Test")):
+                splt = test_splt[1].strip()
                 if(filter):
                     result = re.match(filter, splt)
                     if(result):
