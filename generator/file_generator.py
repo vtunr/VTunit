@@ -12,11 +12,11 @@ class FileGenerator():
             os.makedirs(self.test_dest)
         self.extra_include = extra_include
         self.static = static
-        self.test_file_name = self.getTestFileName()
+        self.test_file_name = self.get_test_file_name()
         self.generate_test_c_file()
         self.generate_test_cmake_file()
 
-    def getTestFileName(self):
+    def get_test_file_name(self):
         return "test_"+self.c_file_name[:-2]
 
     def generate_test_c_file(self):
