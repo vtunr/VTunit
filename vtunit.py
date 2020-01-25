@@ -24,16 +24,16 @@ class Project:
         self.cmd_postbuild = "ninja postbuild"
 
     def gen_project(self):
-        if(self.cmake_gen.isCMakeListsGen()):
+        if(self.cmake_gen.is_cmakelists_generated()):
             #TODO : Update current config from command line
             raise Exception("Can't gen a project already init")
-        self.cmake_gen.CreateCMakeLists()
+        self.cmake_gen.create_cmakelists()
 
     def create_new_unit_test(self, file_name, extra_include = None, test_folder = None):
-        if(not self.cmake_gen.isCMakeListsGen()):
+        if(not self.cmake_gen.is_cmakelists_generated()):
             raise Exception("Project not found")
         FileGenerator(file_name, test_folder, extra_include, False)
-        self.cmake_gen.AddTest("test_%s.cmake"%file_name[:-2])
+        self.cmake_gen.add_test("test_%s.cmake"%file_name[:-2])
 
     def clean_all(self):
         shutil.rmtree("build", ignore_errors=True)
