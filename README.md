@@ -1,3 +1,5 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vtunr_VTunit&metric=alert_status)](https://sonarcloud.io/dashboard?id=vtunr_VTunit)
+
 # VTunit
 
 This is a unit test/mock framework based on Unity and fff, aimed for embedded developers.

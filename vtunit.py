@@ -24,16 +24,16 @@ class Project:
         self.cmd_postbuild = "ninja postbuild"
 
     def gen_project(self):
-        if(self.cmake_gen.isCMakeListsGen()):
+        if(self.cmake_gen.is_cmakelists_generated()):
             #TODO : Update current config from command line
             raise Exception("Can't gen a project already init")
-        self.cmake_gen.CreateCMakeLists()
+        self.cmake_gen.create_cmakelists()
 
     def create_new_unit_test(self, file_name, extra_include = None, test_folder = None):
-        if(not self.cmake_gen.isCMakeListsGen()):
+        if(not self.cmake_gen.is_cmakelists_generated()):
             raise Exception("Project not found")
-        FG = FileGenerator(file_name, test_folder, extra_include, False)
-        self.cmake_gen.AddTest("test_%s.cmake"%file_name[:-2])
+        FileGenerator(file_name, test_folder, extra_include, False)
+        self.cmake_gen.add_test("test_%s.cmake"%file_name[:-2])
 
     def clean_all(self):
         shutil.rmtree("build", ignore_errors=True)
@@ -108,10 +108,32 @@ class Project:
             self.run_cmd(self.cmd_gen_xml)
             os.chdir("../")
 
+
+def process_build(pr, args):
+    if(args.clean):
+        pr.clean()
+    if(args.clean_all):
+        pr.clean_all()
+    if(args.cmake):
+        pr.cmake()
+    if(args.run):
+        pr.run(args.filter, args.ignore_postbuild, args.ignore_prebuild)
+    if(args.list):
+        pr.print_test_list(args.filter)
+
+def process_new(pr, args):
+    if(args.extra_include or args.test_folder):
+        raise Exception("Not supported options")
+    pr.create_new_unit_test(args.file_name)
+
+def process_init(pr):
+    print("Generating project")
+    pr.gen_project()
+
 def main():
     parser = argparse.ArgumentParser("VTunit")
     subparser = parser.add_subparsers(dest='command')
-    init = subparser.add_parser('init', help='Init project')
+    subparser.add_parser('init', help='Init project')
     create_test = subparser.add_parser('new', help='Create new unit test')
     create_test.add_argument("--file_name",
         help='C File name to test'
@@ -134,22 +156,10 @@ def main():
     args = parser.parse_args()
     pr = Project()
     if(args.command == "init"):
-        print "Generating project"
-        pr.gen_project()
+        process_init(pr)
     if(args.command == "new"):
-        if(args.extra_include or args.test_folder):
-            raise Exception("Not supported options")
-        pr.create_new_unit_test(args.file_name)
+        process_new(pr, args)
     if(args.command == "build"):
-        if(args.clean):
-            pr.clean()
-        if(args.clean_all):
-            pr.clean_all()
-        if(args.cmake):
-            pr.cmake()
-        if(args.run):
-            pr.run(args.filter, args.ignore_postbuild, args.ignore_prebuild)
-        if(args.list):
-            pr.print_test_list(args.filter)
+        process_build(pr, args)
 if __name__ == '__main__':
     main()

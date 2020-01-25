@@ -2,22 +2,23 @@ import os
 
 class CMakeListsGenerator():
     def __init__(self, test_path = None):
+        self.name_cmake = "CMakeLists.txt"
         if(test_path == None):
             self.test_path = os.getcwd()
         else:
             self.test_path = test_path
 
-    def isCMakeListsGen(self):
-        return os.path.exists(os.path.join(self.test_path, "CMakeLists.txt"))
+    def is_cmakelists_generated(self):
+        return os.path.exists(os.path.join(self.test_path, self.name_cmake))
         
-    def CreateCMakeLists(self):
-        if(self.isCMakeListsGen()):
+    def create_cmakelists(self):
+        if(self.is_cmakelists_generated()):
             raise Exception("Already created")
         else:
-            self.genCMakeLists()
+            self.generate_cmakelists()
 
-    def genCMakeLists(self):
-        with open(os.path.join(self.test_path, "CMakeLists.txt"), 'w') as f:
+    def generate_cmakelists(self):
+        with open(os.path.join(self.test_path, self.name_cmake), 'w') as f:
             f.write("cmake_minimum_required(VERSION 2.6)\n\n")
 
             f.write("include(vtunit/cmake/ctest.cmake)\n")
@@ -42,6 +43,6 @@ class CMakeListsGenerator():
         with open(os.path.join(self.test_path, "postbuild.cmake"), 'w') as f:
             f.write("# Here put your postbuild cmd\n\n")
 
-    def AddTest(self, test_cmake):
-        with open(os.path.join(self.test_path, "CMakeLists.txt"), 'a') as f:
+    def add_test(self, test_cmake):
+        with open(os.path.join(self.test_path, self.name_cmake), 'a') as f:
             f.write("include(test/%s)\n"%test_cmake)
