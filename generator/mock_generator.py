@@ -111,7 +111,10 @@ class MockGenerator():
             return
         ref = line.split(':')
         function_name = ref[1]
-        return_ = ref[3]
+        if(ref[2] == "struct"):
+            return_ = "struct " + ref[3]
+        else:
+            return_ = ref[3]
         sign = ref[4]
         parsed_sign = self.ctags_method_parse_sig(sign)
         for t in parsed_sign[0]:
