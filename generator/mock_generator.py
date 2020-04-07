@@ -58,7 +58,7 @@ class MockGenerator():
             path = os.path.join(os.path.realpath(i), header_to_mock)
             if(os.path.isfile(path)):
                 return path
-        raise Exception("Header to mock not found")
+        raise Exception("Header to mock not found (%s)"%header_to_mock)
 
     def create_folder(self):
         shutil.rmtree("mock/%s/"%os.path.basename(self.file_test[:-2]), ignore_errors=True)
@@ -108,8 +108,10 @@ class MockGenerator():
 
     def ctags_method_parse_line(self, line, writer):
         if(not len(line)):
-            return
+            return ""
         ref = line.split(':')
+        if(len(ref) != 5):
+            return ""
         function_name = ref[1]
         if(ref[2] == "struct"):
             return_ = "struct " + ref[3]
