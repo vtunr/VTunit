@@ -9,13 +9,14 @@ import shutil
 import re
 
 class Project:
-    def __init__(self):
-        self.current_folder = os.getcwd()
+    def __init__(self, dir):
+        self.current_folder = os.path.realpath(dir)
+        os.chdir(self.current_folder)
         self.cmake_gen = CMakeListsGenerator()
         self.define_command()
 
     def define_command(self):
-        self.cmd_cmake = "cmake .. -GNinja"
+        self.cmd_cmake = "cmake %s -GNinja"%self.current_folder
         self.cmd_ninja =  "ninja"
         self.cmd_ctest = "ctest -V"
         self.cmd_gen_xml = "python ../vtunit/generator/output_generator.py --log_file Testing/Temporary/LastTest.log --junit_xml"
@@ -132,6 +133,7 @@ def process_init(pr):
 
 def main():
     parser = argparse.ArgumentParser("VTunit")
+    parser.add_argument('project_path', nargs='?', default=os.getcwd())
     subparser = parser.add_subparsers(dest='command')
     subparser.add_parser('init', help='Init project')
     create_test = subparser.add_parser('new', help='Create new unit test')
@@ -154,7 +156,7 @@ def main():
     build.add_argument('--ignore_prebuild', help='Will not run prebuild', action='store_true')
     build.add_argument('--ignore_postbuild', help='Will not run postbuild', action='store_true')
     args = parser.parse_args()
-    pr = Project()
+    pr = Project(args.project_path)
     if(args.command == "init"):
         process_init(pr)
     if(args.command == "new"):
