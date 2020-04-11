@@ -31,13 +31,11 @@ sudo make install
 
 # Setup unit test for a project
 
-* `cd my_unit_test_folder`
-* `python vtunit/vtunit.py init`
+* `python vtunit/vtunit.py {path_unit_test} init`
 
 # Creating a new unit test
 
-* `cd my_unit_test_folder`
-* `python vtunit/vtunit.py new --file_name {my_file_name.c}`
+* `python vtunit/vtunit.py {path_unit_test} new --file_name {my_file_name.c}`
 
 It will generate into the test folder:
 * `test_{file_to_test}.c`
