@@ -16,7 +16,7 @@ class Project:
         self.define_command()
 
     def define_command(self):
-        self.cmd_cmake = "cmake .. -GNinja"
+        self.cmd_cmake = "cmake %s -GNinja"%self.current_folder
         self.cmd_ninja =  "ninja"
         self.cmd_ctest = "ctest -V"
         self.cmd_gen_xml = "python ../vtunit/generator/output_generator.py --log_file Testing/Temporary/LastTest.log --junit_xml"
