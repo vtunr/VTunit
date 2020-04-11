@@ -8,7 +8,7 @@ This is a unit test/mock framework based on Unity and fff, aimed for embedded de
 
 Install the package with pip
 
-* `pip install -e git+https://github.com/vtunr/VTunit.git`
+* `pip install -e git+https://github.com/vtunr/VTunit.git#egg=VTunit`
 * `pip install -e .` if you clone the repository (for development purpose)
 
 ## Package to install (if you choose local build)
