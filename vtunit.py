@@ -19,7 +19,7 @@ class Project:
         self.cmd_cmake = "cmake %s -GNinja"%self.current_folder
         self.cmd_ninja =  "ninja"
         self.cmd_ctest = "ctest -V"
-        self.cmd_gen_xml = "python ../vtunit/generator/output_generator.py --log_file Testing/Temporary/LastTest.log --junit_xml"
+        self.cmd_gen_xml = "python2 ../vtunit/generator/output_generator.py --log_file Testing/Temporary/LastTest.log --junit_xml"
         self.cmd_ninja_clean = "ninja clean"
         self.cmd_prebuild = "ninja prebuild"
         self.cmd_postbuild = "ninja postbuild"
