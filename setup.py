@@ -3,6 +3,8 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+packages = [dep.rstrip('\n') for dep in open("requirements.txt", "r")]
+
 setuptools.setup(
     name="VTunit", # Replace with your own username
     version="0.0.1-alpha",
@@ -19,4 +21,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=2.7',
+    install_requires=packages
 )
