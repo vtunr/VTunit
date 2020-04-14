@@ -6,12 +6,16 @@ This is a unit test/mock framework based on Unity and fff, aimed for embedded de
 
 # Installation 
 
+## Local use
+
+### Installing vtunit
+
 Install the package with pip
 
 * `pip install -e git+https://github.com/vtunr/VTunit.git#egg=VTunit`
 * `pip install -e .` if you clone the repository (for development purpose)
 
-## Package to install (if you choose local build)
+### Package requirements 
 
 On ubuntu/WSL :
 
@@ -25,6 +29,28 @@ cd ctags
 make
 sudo make install
 ``` 
+
+## Docker
+
+There is one docker image available on [dockerhub](https://hub.docker.com/repository/docker/vtunr/vtunit/general)
+
+You can use to run test directly in docker : 
+
+```
+docker run --name vtunit --rm -v ${PWD}:/project -v /project/ -t vtunr/vtunit:latest python -m vtunit unit_test/ build --cmake --run
+```
+
+You can also run it interactively :
+```
+docker run --name vtunit --rm -v ${PWD}:/project -v /project/ -it vtunr/vtunit:latest
+```
+
+and then run your commands : 
+```
+root@56f7875b6a45:/project# python -m vtunit unit_test/ build --clean_all --cmake --run
+Running cmake /project/unit_test -GNinja
+...
+```
 
 # Setup unit test for a project
 
@@ -76,9 +102,12 @@ You can also filter the test you want to run :
 
 You can also ignore prebuild/postbuild command by adding `--ignore_prebuild` and `--ignore_postbuild`
 
+
 # TODO :
 
 * Improve argparse
-* Add possibility to run it in a docker container
+* Adding subproject
+* Using pypi
+* Making a proper release on pypi & dockerhub
 
 
