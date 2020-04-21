@@ -1,4 +1,5 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vtunr_VTunit&metric=alert_status)](https://sonarcloud.io/dashboard?id=vtunr_VTunit)
+[![Docker](https://img.shields.io/docker/v/vtunr/vtunit)](https://hub.docker.com/repository/docker/vtunr/vtunit)
 
 # VTunit
 
