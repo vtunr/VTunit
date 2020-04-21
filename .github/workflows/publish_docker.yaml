@@ -1,6 +1,11 @@
 name: Publish VTunit docker image
 # This workflow is triggered on pushes to the repository.
-on: [push]
+on: 
+  push:
+    branches:
+      - master
+    tags:
+      - '*'
 
 jobs:
   build:
@@ -15,6 +20,7 @@ jobs:
           repository: vtunr/vtunit
           dockerfile: docker/Dockerfile
           tag_with_sha: true
+          tag_with_ref: true
           tags: latest
           
       - name: Publish vtunit_esp
@@ -25,4 +31,5 @@ jobs:
           repository: vtunr/vtunit_esp
           dockerfile: docker/esp/Dockerfile
           tag_with_sha: true
+          tag_with_ref: true
           tags: latest
