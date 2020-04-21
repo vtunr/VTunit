@@ -4,5 +4,5 @@ This container is to use when unit testing code on ESP32 as you need to generate
 Run it the same way as the docker for VTunit only : 
 
 ```
-docker run --name vtunit_esp --rm -v ${PWD}:/project -v /project/ -t vtunr/vtunit_esp:latest python -m vtunit unit_test/ build --cmake --run
+docker run --name vtunit_esp --rm -v ${PWD}:/project -v /project/ -t vtunr/vtunit_esp:latest python2.7 -m vtunit unit_test/ build --cmake --run
 ```
