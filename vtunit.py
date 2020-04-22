@@ -15,7 +15,7 @@ class Project:
     def __init__(self, dir):
         self.current_folder = os.path.realpath(dir)
         os.chdir(self.current_folder)
-        self.cmake_gen = CMakeListsGenerator()
+        self.cmake_gen = CMakeListsGenerator(self.current_folder)
         self.define_command()
 
     def define_command(self):
