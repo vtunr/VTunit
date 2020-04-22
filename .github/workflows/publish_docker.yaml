@@ -3,7 +3,7 @@ name: Publish VTunit docker image
 on: 
   push:
     branches:
-      - feature/setup_using_git_version
+      - master
     tags:
       - '*'
 
