@@ -31,7 +31,7 @@ class Project:
         vtunit_cmakefiles_dir = os.path.join(self.current_folder,"vtunit_files","cmake")
         if os.path.exists(vtunit_cmakefiles_dir):
             shutil.rmtree(vtunit_cmakefiles_dir)
-        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "cmake"),  )
+        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "cmake"),  vtunit_cmakefiles_dir)
         vtunit_lib_dir = os.path.join(self.current_folder,"vtunit_files","lib")
         if os.path.exists(vtunit_lib_dir):
             shutil.rmtree(vtunit_lib_dir)
@@ -172,8 +172,6 @@ def main():
     build.add_argument('--ignore_postbuild', help='Will not run postbuild', action='store_true')
     args = parser.parse_args()
     pr = Project(args.project_path)
-    if(args.version):
-        print "Should print version!"
     if(args.command == "init"):
         process_init(pr)
     if(args.command == "new"):
