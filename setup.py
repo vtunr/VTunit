@@ -1,13 +1,16 @@
 import setuptools
-
+import subprocess
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 packages = [dep.rstrip('\n') for dep in open("requirements.txt", "r")]
 
+def get_git_version():
+    return subprocess.check_output(['git', 'describe','--dirty', '--tags']).strip()
+
 setuptools.setup(
     name="VTunit", # Replace with your own username
-    version="0.0.1-alpha",
+    version=get_git_version(),
     author="Tony Martinet",
     author_email="tonymartinet@gmail.com",
     description="Unit test helper",

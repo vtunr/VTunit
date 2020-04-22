@@ -1,13 +1,15 @@
 
-import os
+from subprocess import check_output
+import pkg_resources
+import subprocess
 import argparse
+import shutil
+import sys
+import os
+import re
 from generator.cmakelist_generator import *
 from generator.file_generator import *
-import subprocess
-from subprocess import check_output
-import shutil
-import re
-import sys
+
 
 class Project:
     def __init__(self, dir):
@@ -145,6 +147,7 @@ def process_init(pr):
 
 def main():
     parser = argparse.ArgumentParser("VTunit")
+    parser.add_argument('--version', '-v', action='version', version = pkg_resources.require("VTunit")[0].version)
     parser.add_argument('project_path', nargs='?', default=os.getcwd())
     subparser = parser.add_subparsers(dest='command')
     subparser.add_parser('init', help='Init project')
@@ -169,6 +172,8 @@ def main():
     build.add_argument('--ignore_postbuild', help='Will not run postbuild', action='store_true')
     args = parser.parse_args()
     pr = Project(args.project_path)
+    if(args.version):
+        print "Should print version!"
     if(args.command == "init"):
         process_init(pr)
     if(args.command == "new"):
