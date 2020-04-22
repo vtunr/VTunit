@@ -7,6 +7,7 @@ import subprocess
 from subprocess import check_output
 import shutil
 import re
+import sys
 
 class Project:
     def __init__(self, dir):
@@ -19,15 +20,22 @@ class Project:
         self.cmd_cmake = "cmake %s -GNinja"%self.current_folder
         self.cmd_ninja =  "ninja"
         self.cmd_ctest = "ctest -V"
-        self.cmd_gen_xml = "python2 ../vtunit/generator/output_generator.py --log_file Testing/Temporary/LastTest.log --junit_xml"
+        self.cmd_gen_xml = sys.executable," ../vtunit/generator/output_generator.py --log_file Testing/Temporary/LastTest.log --junit_xml"
         self.cmd_ninja_clean = "ninja clean"
         self.cmd_prebuild = "ninja prebuild"
         self.cmd_postbuild = "ninja postbuild"
+
+    def copy_files(self):
+        vtunit_files_dir = os.path.join(self.current_folder,"vtunit_files")
+        if os.path.exists(vtunit_files_dir):
+            shutil.rmtree(vtunit_files_dir)
+        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "cmake"), vtunit_files_dir)
 
     def gen_project(self):
         if(self.cmake_gen.is_cmakelists_generated()):
             #TODO : Update current config from command line
             raise Exception("Can't gen a project already init")
+        self.copy_files()
         self.cmake_gen.create_cmakelists()
 
     def create_new_unit_test(self, file_name, extra_include = None, test_folder = None):
@@ -157,6 +165,7 @@ def main():
     build.add_argument('--ignore_postbuild', help='Will not run postbuild', action='store_true')
     args = parser.parse_args()
     pr = Project(args.project_path)
+    pr.copy_files()
     if(args.command == "init"):
         process_init(pr)
     if(args.command == "new"):
