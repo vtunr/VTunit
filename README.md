@@ -13,7 +13,7 @@ This is a unit test/mock framework based on Unity and fff, aimed for embedded de
 
 Install the package with pip
 
-* `pip install -e git+https://github.com/vtunr/VTunit.git#egg=VTunit`
+* `pip install git+https://github.com/vtunr/VTunit.git#egg=VTunit`
 * `pip install -e .` if you clone the repository (for development purpose)
 
 ### Package requirements 
@@ -38,7 +38,7 @@ There is one docker image available on [dockerhub](https://hub.docker.com/reposi
 You can use to run test directly in docker : 
 
 ```
-docker run --name vtunit --rm -v ${PWD}:/project -v /project/ -t vtunr/vtunit:latest python -m vtunit unit_test/ build --cmake --run
+docker run --name vtunit --rm -v ${PWD}:/project -v /project/ -t vtunr/vtunit:latest vtunit unit_test/ build --cmake --run
 ```
 
 You can also run it interactively :
@@ -48,18 +48,18 @@ docker run --name vtunit --rm -v ${PWD}:/project -v /project/ -it vtunr/vtunit:l
 
 and then run your commands : 
 ```
-root@56f7875b6a45:/project# python -m vtunit unit_test/ build --clean_all --cmake --run
+root@56f7875b6a45:/project# vtunit unit_test/ build --clean_all --cmake --run
 Running cmake /project/unit_test -GNinja
 ...
 ```
 
 # Setup unit test for a project
 
-* `python -m  vtunit {path_unit_test} init`
+* `vtunit {path_unit_test} init`
 
 # Creating a new unit test
 
-* `python -m vtunit {path_unit_test} new --file_name {my_file_name.c}`
+* `vtunit {path_unit_test} new --file_name {my_file_name.c}`
 
 It will generate into the test folder:
 * `test_{file_to_test}.c`
@@ -92,14 +92,14 @@ You need to add :
 
 Running in WSL or linux : 
 
-* If you want to force calling cmake (need to be done once before calling `run`): `python -m vtunit {path_unit_test} build --clean_all --cmake`
-* Then to build and run : `python -m vtunit {path_unit_test} build --run`
-* To clean : `python -m vtunit {path_unit_test} build --clean`
+* If you want to force calling cmake (need to be done once before calling `run`): `vtunit {path_unit_test} build --clean_all --cmake`
+* Then to build and run : `vtunit {path_unit_test} build --run`
+* To clean : `vtunit {path_unit_test} build --clean`
 
 You can also filter the test you want to run :
 
-* To list : `python -m vtunit {path_unit_test} build --list --filter {my_regex}` (optional `--filter`)
-* To filter : `python -m vtunit {path_unit_test} build --run --filter {my_regex}`
+* To list : `vtunit {path_unit_test} build --list --filter {my_regex}` (optional `--filter`)
+* To filter : `vtunit {path_unit_test} build --run --filter {my_regex}`
 
 You can also ignore prebuild/postbuild command by adding `--ignore_prebuild` and `--ignore_postbuild`
 

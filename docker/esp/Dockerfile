@@ -19,6 +19,6 @@ RUN apt install -y \
 
 RUN mkdir ~/ctags/ && cd ~/ctags/ && git clone https://github.com/universal-ctags/ctags.git . && ./autogen.sh && ./configure && make install 
 
-RUN mkdir -p vt && python2.7 -m pip install -e git+https://github.com/vtunr/VTunit.git#egg=VTunit --src /vt 
+RUN mkdir -p ~/vt && python2.7 -m pip install -e git+https://github.com/vtunr/VTunit.git#egg=VTunit --src ~/vt
 
 WORKDIR /project
