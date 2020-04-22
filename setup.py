@@ -20,6 +20,12 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    entry_points = {
+        'console_scripts': ['vtunit=vtunit:main',
+                            'vtunit_cmake_generator=generator.mock_generator:main', 
+                            'vtunit_test_runner_generator=generator.test_runner_generator:main',
+                            'vtunit_output_generator=generator.output_generator:main']
+    },
     python_requires='>=2.7',
     install_requires=packages
 )

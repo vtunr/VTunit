@@ -61,6 +61,7 @@ class MockGenerator():
         raise Exception("Header to mock not found (%s)"%header_to_mock)
 
     def create_folder(self):
+        print("File", self.file_test)
         shutil.rmtree("mock/%s/"%os.path.basename(self.file_test[:-2]), ignore_errors=True)
         os.makedirs("mock/%s/"%os.path.basename(self.file_test[:-2]))
 
