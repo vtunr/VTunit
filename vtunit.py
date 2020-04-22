@@ -26,14 +26,14 @@ class Project:
         self.cmd_postbuild = "ninja postbuild"
 
     def copy_files(self):
-        vtunit_files_dir = os.path.join(self.current_folder,"vtunit_files","cmake")
-        if os.path.exists(vtunit_files_dir):
-            shutil.rmtree(vtunit_files_dir)
-        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "cmake"), vtunit_files_dir)
-        vtunit_files_dir = os.path.join(self.current_folder,"vtunit_files","lib")
-        if os.path.exists(vtunit_files_dir):
-            shutil.rmtree(vtunit_files_dir)
-        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"), vtunit_files_dir)
+        vtunit_cmakefiles_dir = os.path.join(self.current_folder,"vtunit_files","cmake")
+        if os.path.exists(vtunit_cmakefiles_dir):
+            shutil.rmtree(vtunit_cmakefiles_dir)
+        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "cmake"),  )
+        vtunit_lib_dir = os.path.join(self.current_folder,"vtunit_files","lib")
+        if os.path.exists(vtunit_lib_dir):
+            shutil.rmtree(vtunit_lib_dir)
+        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"), vtunit_lib_dir)
 
     def gen_project(self):
         if(self.cmake_gen.is_cmakelists_generated()):
