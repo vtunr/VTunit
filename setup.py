@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 packages = [dep.rstrip('\n') for dep in open("requirements.txt", "r")]
 
 def get_git_version():
-    return subprocess.check_output(['git', 'describe','--dirty']).strip()
+    return subprocess.check_output(['git', 'describe','--dirty', '--tags']).strip()
 
 setuptools.setup(
     name="VTunit", # Replace with your own username
