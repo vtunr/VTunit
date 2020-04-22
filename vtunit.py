@@ -169,7 +169,6 @@ def main():
     build.add_argument('--ignore_postbuild', help='Will not run postbuild', action='store_true')
     args = parser.parse_args()
     pr = Project(args.project_path)
-    pr.copy_files()
     if(args.command == "init"):
         process_init(pr)
     if(args.command == "new"):
