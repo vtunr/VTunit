@@ -135,7 +135,7 @@ def process_build(pr, args):
         pr.print_test_list(args.filter)
 
 def process_new(pr, args):
-    pr.create_new_unit_test(args.new)
+    pr.create_new_unit_test(args.filename)
 
 def process_init(pr, name):
     print("Generating project")
@@ -155,7 +155,6 @@ def main():
     test = subparser.add_parser('test', help='Build things')
     test.add_argument('--clean', help='Clean unit test (Ninja)', action='store_true')
     test.add_argument('--clean_all', help='Clean all unit test (CMake+Ninja)', action='store_true')
-    test.add_argument('--cmake', help='Run cmake', action='store_true')
     test.add_argument('--run', help='Run unit test (can be filtered)', action='store_true')
     test.add_argument('--filter', help='Filter unit test')
     test.add_argument('--list', help='List unit test (can be filtered)', action='store_true')
