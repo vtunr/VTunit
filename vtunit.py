@@ -19,7 +19,7 @@ class Project:
         self.vtunit_lib_folder = os.path.join(self.vtunit_folder, "lib")
         try:
             os.makedirs(os.path.join(self.project_folder))
-        except:
+        except OSError:
             pass
         os.chdir(self.project_folder)
         self.cmake_gen = CMakeListsGenerator(self.project_folder)
@@ -96,7 +96,7 @@ class Project:
         if(not ignore_prebuild):
             try:
                 os.chdir("build")
-            except:
+            except OSError:
                 self.cmake()
                 os.chdir("build")
             self.run_cmd(self.cmd_prebuild)
