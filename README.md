@@ -92,14 +92,14 @@ You need to add :
 
 Running in WSL or linux : 
 
-* If you want to force calling cmake (need to be done once before calling `run`): `vtunit {path_unit_test} build --clean_all --cmake`
-* Then to build and run : `vtunit {path_unit_test} build --run`
-* To clean : `vtunit {path_unit_test} build --clean`
+* To build and run : `vtunit {path_unit_test} test --run`
+* To clean : `vtunit {path_unit_test} test --clean`
+* To clean both build and cmake: `vtunit {path_unit_test} test --clean_all`
 
 You can also filter the test you want to run :
 
-* To list : `vtunit {path_unit_test} build --list --filter {my_regex}` (optional `--filter`)
-* To filter : `vtunit {path_unit_test} build --run --filter {my_regex}`
+* To list : `vtunit {path_unit_test} test --list --filter {my_regex}` (optional `--filter`)
+* To filter : `vtunit {path_unit_test} test --run --filter {my_regex}`
 
 You can also ignore prebuild/postbuild command by adding `--ignore_prebuild` and `--ignore_postbuild`
 
