@@ -13,13 +13,20 @@ from generator.file_generator import *
 
 class Project:
     def __init__(self, dir):
-        self.current_folder = os.path.realpath(dir)
-        os.chdir(self.current_folder)
-        self.cmake_gen = CMakeListsGenerator(self.current_folder)
+        self.project_folder = os.path.realpath(dir)
+        self.vtunit_folder = os.path.realpath(os.path.dirname(__file__))
+        self.vtunit_cmakehelper_folder = os.path.join(self.vtunit_folder, "cmake")
+        self.vtunit_lib_folder = os.path.join(self.vtunit_folder, "lib")
+        try:
+            os.makedirs(os.path.join(self.project_folder))
+        except:
+            pass
+        os.chdir(self.project_folder)
+        self.cmake_gen = CMakeListsGenerator(self.project_folder)
         self.define_command()
 
     def define_command(self):
-        self.cmd_cmake = "cmake %s -GNinja"%self.current_folder
+        self.cmd_cmake = "cmake %s -GNinja -DVT_CMAKEHELPER=%s -DVT_LIB=%s"%(self.project_folder, self.vtunit_cmakehelper_folder, self.vtunit_lib_folder)
         self.cmd_ninja =  "ninja"
         self.cmd_ctest = "ctest -V"
         self.cmd_gen_xml = "vtunit_output_generator --log_file Testing/Temporary/LastTest.log --junit_xml"
@@ -27,22 +34,11 @@ class Project:
         self.cmd_prebuild = "ninja prebuild"
         self.cmd_postbuild = "ninja postbuild"
 
-    def copy_files(self):
-        vtunit_cmakefiles_dir = os.path.join(self.current_folder,"vtunit_files","cmake")
-        if os.path.exists(vtunit_cmakefiles_dir):
-            shutil.rmtree(vtunit_cmakefiles_dir)
-        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "cmake"),  vtunit_cmakefiles_dir)
-        vtunit_lib_dir = os.path.join(self.current_folder,"vtunit_files","lib")
-        if os.path.exists(vtunit_lib_dir):
-            shutil.rmtree(vtunit_lib_dir)
-        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "lib"), vtunit_lib_dir)
-
-    def gen_project(self):
+    def gen_project(self, name):
         if(self.cmake_gen.is_cmakelists_generated()):
             #TODO : Update current config from command line
             raise Exception("Can't gen a project already init")
-        self.copy_files()
-        self.cmake_gen.create_cmakelists()
+        self.cmake_gen.create_cmakelists(name)
 
     def create_new_unit_test(self, file_name, extra_include = None, test_folder = None):
         if(not self.cmake_gen.is_cmakelists_generated()):
@@ -78,7 +74,8 @@ class Project:
         list_test = []
         for i in out.split("\n"):
             test_splt = i.split(": ")
-            if(len(test_splt)>1 and test_splt[0].strip().startswith("Test")):
+            print test_splt
+            if(len(test_splt)>1 and test_splt[0].strip().startswith("Test") and not test_splt[1].strip().endswith("_build")):
                 splt = test_splt[1].strip()
                 if(filter):
                     result = re.match(filter, splt)
@@ -98,7 +95,11 @@ class Project:
 
     def run(self, filter, ignore_postbuild, ignore_prebuild):
         if(not ignore_prebuild):
-            os.chdir("build")
+            try:
+                os.chdir("build")
+            except:
+                self.cmake()
+                os.chdir("build")
             self.run_cmd(self.cmd_prebuild)
             os.chdir("../")
         if(filter != None):
@@ -137,29 +138,22 @@ def process_build(pr, args):
         pr.print_test_list(args.filter)
 
 def process_new(pr, args):
-    if(args.extra_include or args.test_folder):
-        raise Exception("Not supported options")
     pr.create_new_unit_test(args.file_name)
 
-def process_init(pr):
+def process_init(pr, name):
     print("Generating project")
-    pr.gen_project()
+    pr.gen_project(name)
 
 def main():
     parser = argparse.ArgumentParser("VTunit")
     parser.add_argument('--version', '-v', action='version', version = pkg_resources.require("VTunit")[0].version)
     parser.add_argument('project_path', nargs='?', default=os.getcwd())
     subparser = parser.add_subparsers(dest='command')
-    subparser.add_parser('init', help='Init project')
+    init = subparser.add_parser('init', help='Init project')
+    init.add_argument("--name", default = "unit test", help="Name of the project")
     create_test = subparser.add_parser('new', help='Create new unit test')
     create_test.add_argument("--file_name",
         help='C File name to test'
-    )
-    create_test.add_argument("--extra_include",
-        help='New include to add for this test'
-    )
-    create_test.add_argument("--test_folder",
-        help='Where to generate the files'
     )
     build = subparser.add_parser('build', help='Build things')
     build.add_argument('--clean', help='Clean unit test (Ninja)', action='store_true')
@@ -173,7 +167,7 @@ def main():
     args = parser.parse_args()
     pr = Project(args.project_path)
     if(args.command == "init"):
-        process_init(pr)
+        process_init(pr, args.name)
     if(args.command == "new"):
         process_new(pr, args)
     if(args.command == "build"):
