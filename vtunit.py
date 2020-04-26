@@ -74,8 +74,7 @@ class Project:
         list_test = []
         for i in out.split("\n"):
             test_splt = i.split(": ")
-            print test_splt
-            if(len(test_splt)>1 and test_splt[0].strip().startswith("Test") and not test_splt[1].strip().endswith("_build")):
+            if(len(test_splt)>1 and test_splt[0].strip().startswith("Test")):
                 splt = test_splt[1].strip()
                 if(filter):
                     result = re.match(filter, splt)

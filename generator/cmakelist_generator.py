@@ -12,10 +12,10 @@ class CMakeListsGenerator():
         return os.path.exists(os.path.join(self.test_path, self.name_cmake))
         
     def create_cmakelists(self, name):
-        #if(self.is_cmakelists_generated()):
-        #    raise Exception("Already created")
-        #else:
-        self.generate_cmakelists(name)
+        if(self.is_cmakelists_generated()):
+            raise Exception("Already created")
+        else:
+            self.generate_cmakelists(name)
 
     def generate_cmakelists(self, name):
         with open(os.path.join(self.test_path, self.name_cmake), 'w') as f:
