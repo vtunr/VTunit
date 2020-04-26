@@ -129,15 +129,13 @@ def process_build(pr, args):
         pr.clean()
     if(args.clean_all):
         pr.clean_all()
-    if(args.cmake):
-        pr.cmake()
     if(args.run):
         pr.run(args.filter, args.ignore_postbuild, args.ignore_prebuild)
     if(args.list):
         pr.print_test_list(args.filter)
 
 def process_new(pr, args):
-    pr.create_new_unit_test(args.file_name)
+    pr.create_new_unit_test(args.new)
 
 def process_init(pr, name):
     print("Generating project")
@@ -149,27 +147,27 @@ def main():
     parser.add_argument('project_path', nargs='?', default=os.getcwd())
     subparser = parser.add_subparsers(dest='command')
     init = subparser.add_parser('init', help='Init project')
-    init.add_argument("--name", default = "unit test", help="Name of the project")
+    init.add_argument("--name", default = "unit test", help="Name of the project")    
     create_test = subparser.add_parser('new', help='Create new unit test')
     create_test.add_argument("--file_name",
         help='C File name to test'
     )
-    build = subparser.add_parser('build', help='Build things')
-    build.add_argument('--clean', help='Clean unit test (Ninja)', action='store_true')
-    build.add_argument('--clean_all', help='Clean all unit test (CMake+Ninja)', action='store_true')
-    build.add_argument('--cmake', help='Run cmake', action='store_true')
-    build.add_argument('--run', help='Run unit test (can be filtered)', action='store_true')
-    build.add_argument('--filter', help='Filter unit test')
-    build.add_argument('--list', help='List unit test (can be filtered)', action='store_true')
-    build.add_argument('--ignore_prebuild', help='Will not run prebuild', action='store_true')
-    build.add_argument('--ignore_postbuild', help='Will not run postbuild', action='store_true')
+    test = subparser.add_parser('test', help='Build things')
+    test.add_argument('--clean', help='Clean unit test (Ninja)', action='store_true')
+    test.add_argument('--clean_all', help='Clean all unit test (CMake+Ninja)', action='store_true')
+    test.add_argument('--cmake', help='Run cmake', action='store_true')
+    test.add_argument('--run', help='Run unit test (can be filtered)', action='store_true')
+    test.add_argument('--filter', help='Filter unit test')
+    test.add_argument('--list', help='List unit test (can be filtered)', action='store_true')
+    test.add_argument('--ignore_prebuild', help='Will not run prebuild', action='store_true')
+    test.add_argument('--ignore_postbuild', help='Will not run postbuild', action='store_true')
     args = parser.parse_args()
     pr = Project(args.project_path)
     if(args.command == "init"):
         process_init(pr, args.name)
     if(args.command == "new"):
         process_new(pr, args)
-    if(args.command == "build"):
+    if(args.command == "test"):
         process_build(pr, args)
 if __name__ == '__main__':
     main()
