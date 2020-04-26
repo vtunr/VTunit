@@ -135,7 +135,7 @@ def process_build(pr, args):
         pr.print_test_list(args.filter)
 
 def process_new(pr, args):
-    pr.create_new_unit_test(args.filename)
+    pr.create_new_unit_test(args.file_name)
 
 def process_init(pr, name):
     print("Generating project")
