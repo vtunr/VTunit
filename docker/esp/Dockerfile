@@ -1,4 +1,5 @@
-FROM vtunr/esp:latest
+ARG ESP_SDK_VERSION=latest
+FROM vtunr/esp:$ESP_SDK_VERSION
 
 # Installing vtunit 
 # Install CMake, compilers
