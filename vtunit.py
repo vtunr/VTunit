@@ -147,7 +147,7 @@ def main():
     parser.add_argument('project_path', nargs='?', default=os.getcwd())
     subparser = parser.add_subparsers(dest='command')
     init = subparser.add_parser('init', help='Init project')
-    init.add_argument("--name", default = "unit test", help="Name of the project")    
+    init.add_argument("--name", default = "unit_test", help="Name of the project")    
     create_test = subparser.add_parser('new', help='Create new unit test')
     create_test.add_argument("--file_name",
         help='C File name to test'
