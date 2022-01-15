@@ -38,7 +38,7 @@ There is one docker image available on [dockerhub](https://hub.docker.com/reposi
 You can use to run test directly in docker : 
 
 ```
-docker run --name vtunit --rm -v ${PWD}:/project -v /project/ -t vtunr/vtunit:latest vtunit unit_test/ build --cmake --run
+docker run --name vtunit --rm -v ${PWD}:/project -v /project/ -t vtunr/vtunit:latest vtunit unit_test/ test --run
 ```
 
 You can also run it interactively :
@@ -48,7 +48,7 @@ docker run --name vtunit --rm -v ${PWD}:/project -v /project/ -it vtunr/vtunit:l
 
 and then run your commands : 
 ```
-root@56f7875b6a45:/project# vtunit unit_test/ build --clean_all --cmake --run
+root@56f7875b6a45:/project# vtunit unit_test/ test --run
 Running cmake /project/unit_test -GNinja
 ...
 ```
